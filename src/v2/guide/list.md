@@ -1,5 +1,5 @@
 ---
-title: List Rendering
+title: Render danh sách
 type: guide
 order: 8
 ---
