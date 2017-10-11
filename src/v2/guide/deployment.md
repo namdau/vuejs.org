@@ -1,24 +1,24 @@
 ---
-title: Production Deployment
+title: Triển khai cho môi trường production
 type: guide
 order: 401
 ---
 
-## Bật chế độ Production
+## Bật chế độ production
 
-During development, Vue provides a lot of warnings to help you with common errors and pitfalls. However, these warning strings become useless in production and bloat your app's payload size. In addition, some of these warning checks have small runtime costs that can be avoided in production mode.
+Trong quá trình phát triển, Vue cung cấp rất nhiều cảnh báo nhằm giúp bạn tránh những lỗi và nguy cơ tiềm ẩn thường gặp. Tuy nhiên, những dòng cảnh báo này lại trở nên vô ích trong môi trường production và làm phình to kích thước ứng dụng. Thêm nữa, một vài trong số những phần kiểm tra cảnh báo có runtime costs nhỏ có thể được bỏ qua trong chế độ production.
 
-### Without Build Tools
+### Không sử dụng build tools (công cụ build)
 
-If you are using the full build, i.e. directly including Vue via a script tag without a build tool, make sure to use the minified version (`vue.min.js`) for production. Both versions can be found in the [Installation guide](installation.html#Direct-lt-script-gt-Include).
+Nếu bạn đang sử dụng bản đầy đủ, nghĩa là chèn trực tiếp Vue bằng thẻ script và không sử dụng build tool, hãy đảm bảo đó là bản đã minified (thu nhỏ) cho môi trường production. Cả hai phiên bản đều có thể được tìm thấy tại [Hướng dẫn cài đặt](installation.html#Direct-lt-script-gt-Include).
 
-### With Build Tools
+### Sử dụng build tools
 
-When using a build tool like Webpack or Browserify, the production mode will be determined by `process.env.NODE_ENV` inside Vue's source code, and it will be in development mode by default. Both build tools provide ways to overwrite this variable to enable Vue's production mode, and warnings will be stripped by minifiers during the build. All `vue-cli` templates have these pre-configured for you, but it would be beneficial to know how it is done:
+Nếu bạn đang sử dụng build tool như Webpack hoặc Browserify, chế độ production sẽ được xác định bởi biến môi trường `process.env.NODE_ENV` bên trong mã nguồn của Vue, lưu ý giá trị mặc định của biến này là chế độ development (đang phát triển). Cả hai build tool đều cung cấp các cách thức để ghi đè giá trị của biến này nhằm bật chế độ production, khi đó minifiers sẽ bỏ đi các cảnh báo trong quá trình build. Tất cả templates (bản mẫu) của `vue-cli` đều đã được pre-configured (cấu-hình-trước) cho mục đích này, dù vậy vẫn sẽ có ích nếu bạn hiểu cách thức hoạt động, như mô tả dưới đây:
 
 #### Webpack
 
-Use Webpack's [DefinePlugin](https://webpack.js.org/plugins/define-plugin/) to indicate a production environment, so that warning blocks can be automatically dropped by UglifyJS during minification. Example config:
+Sử dụng [DefinePlugin](https://webpack.js.org/plugins/define-plugin/) của Webpack để xác định môi trường production, những dòng cảnh báo sẽ được tự động bỏ đi trong quá trình minification (thu nhỏ) được tiến hành bởi UglifyJS. Dưới đây là một ví dụ:
 
 ``` js
 var webpack = require('webpack')
@@ -38,9 +38,9 @@ module.exports = {
 
 #### Browserify
 
-- Run your bundling command with the actual `NODE_ENV` environment variable set to `"production"`. This tells `vueify` to avoid including hot-reload and development related code.
+- Chạy lệnh bundling (đóng gói) với giá trị biến môi trường `NODE_ENV` là `"production"`. Cách này sẽ giúp cho `vueify` bỏ qua hot-reload và phần mã trợ giúp cho quá trình phát triển.
 
-- Apply a global [envify](https://github.com/hughsk/envify) transform to your bundle. This allows the minifier to strip out all the warnings in Vue's source code wrapped in env variable conditional blocks. For example:
+- Áp dụng một global [envify](https://github.com/hughsk/envify) transform cho bundle. Cách này sẽ giúp minifier (công cụ thu nhỏ) lược đi toàn bộ những cảnh báo trong mã nguồn của Vue được gói trong các coditional block (khối điều kiện) dùng để kiểm tra biến môi trường. Ví dụ:
 
   ``` bash
   NODE_ENV=production browserify -g envify -e main.js | uglifyjs -c -m > build.js
@@ -48,7 +48,7 @@ module.exports = {
 
 #### Rollup
 
-Use [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace):
+Dùng [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace):
 
 ``` js
 const replace = require('rollup-plugin-replace')
@@ -63,24 +63,24 @@ rollup({
 }).then(...)
 ```
 
-## Pre-Compiling Templates
+## Pre-Compiling templates (Mẫu biên-dịch-trước)
 
-When using in-DOM templates or in-JavaScript template strings, the template-to-render-function compilation is performed on the fly. This is usually fast enough in most cases, but is best avoided if your application is performance-sensitive.
+Khi sử dụng in-DOM templates hoặc in-JavaScript template strings, việc biên dịch template-to-render-function diễn ra ngay trong quá trình chạy ứng dụng. Tốc độ thường là đủ nhanh cho hầu hết các trường hợp, tuy nhiên tốt nhất vẫn nên tránh điều này nếu ứng dụng của bạn đặt nặng về performance (hiệu suất).
 
-The easiest way to pre-compile templates is using [Single-File Components](single-file-components.html) - the associated build setups automatically performs pre-compilation for you, so the built code contains the already compiled render functions instead of raw template strings.
+Cách dễ nhất để pre-compile templates là sử dụng [Single-File Components](single-file-components.html) - những cài đặt build liên quan sẽ tự động thực hiện pre-compilation (biên-dịch-trước), mã sau khi build sẽ bao gồm những hàm render đã được dịch thay vì raw template string (chuỗi mẫu thô).
 
-If you are using Webpack, and prefer separating JavaScript and template files, you can use [vue-template-loader](https://github.com/ktsn/vue-template-loader), which also transforms the template files into JavaScript render functions during the build step.
+Nếu bạn dùng Webpack và muốn tách biệt giữa JavaScript and template files, có thể sử dụng [vue-template-loader](https://github.com/ktsn/vue-template-loader), công cụ này cũng sẽ chuyển hoá files template thành hàm render của Javascript trong quá trình build.
 
-## Extracting Component CSS
+## Trích xuất CSS của component
 
-When using Single-File Components, the CSS inside components are injected dynamically as `<style>` tags via JavaScript. This has a small runtime cost, and if you are using server-side rendering it will cause a "flash of unstyled content". Extracting the CSS across all components into the same file will avoid these issues, and also result in better CSS minification and caching.
+Khi sử dụng Single-File Components, CSS bên trong components được chèn động vào các thẻ `<style>` thông qua JavaScript. Runtime costs cho cách này là nhỏ, và nếu bạn sử dụng server-side rendering (render từ-phía-server) sẽ gây ra hiện tượng "flash of unstyled content" ("hiển thị nội dung thô trong giây lát"). Trích xuất CSS ở tất cả các components và gom vào một file sẽ tránh được những vấn đề nêu trên, ngoài ra việc caching và thu nhỏ CSS cũng sẽ tốt hơn.
 
-Refer to the respective build tool documentations to see how it's done:
+Tham khảo tài liệu của từng build tool dưới đây để hiểu cách thức hoạt động:
 
-- [Webpack + vue-loader](https://vue-loader.vuejs.org/en/configurations/extract-css.html) (the `vue-cli` webpack template has this pre-configured)
+- [Webpack + vue-loader](https://vue-loader.vuejs.org/en/configurations/extract-css.html) (template webpack của `vue-cli` đã cấu hình sẵn cho cách này)
 - [Browserify + vueify](https://github.com/vuejs/vueify#css-extraction)
 - [Rollup + rollup-plugin-vue](https://vuejs.github.io/rollup-plugin-vue/#/en/2.3/?id=custom-handler)
 
-## Tracking Runtime Errors
+## Theo dõi lỗi runtime
 
-If a runtime error occurs during a component's render, it will be passed to the global `Vue.config.errorHandler` config function if it has been set. It might be a good idea to leverage this hook together with an error-tracking service like [Sentry](https://sentry.io), which provides [an official integration](https://sentry.io/for/vue/) for Vue.
+Một lỗi runtime xảy ra trong quá trình render component sẽ được truyền đến hàm global config (cấu hình toàn cục) `Vue.config.errorHandler`, với điều kiện hàm này đã được thiết lập từ trước. Một ý tưởng hợp lí khác là kết hợp hook này với một dịch vụ error-tracking (theo-dõi-lỗi) như Sentry, dịch vụ này còn cung cấp sẵn một giải pháp tích hợp chính thức dành cho Vue.
