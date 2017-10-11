@@ -4,7 +4,7 @@ type: guide
 order: 401
 ---
 
-## Turn on Production Mode
+## Bật chế độ Production
 
 During development, Vue provides a lot of warnings to help you with common errors and pitfalls. However, these warning strings become useless in production and bloat your app's payload size. In addition, some of these warning checks have small runtime costs that can be avoided in production mode.
 
